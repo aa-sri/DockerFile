@@ -1,4 +1,4 @@
-pipeline {
+pipeline { 
     agent any
 
     stages {
@@ -6,9 +6,23 @@ pipeline {
             steps {
                 git branch: 'main', credentialsId: 'd12662da-ddb5-4fc0-8366-5032015ac591', url: 'https://github.com/aa-sri/DockerFile'
                 git branch: 'main', url: 'https://github.com/aa-sri/DockerFile.git'
-                sh 'sudo docker build . -t snowflake1:latest'
-                sh 'sudo docker run snowflake1'
             }
         }
+		stage('docker build & tag') {
+			steps {
+				sh 'sudo docker build . -t aasri/sudhanshu:latest'
+			}
+		}
+		stage('docker push') {
+			steps {
+			    sh 'sudo docker login -u $doc_user -p $doc_pass'
+				sh 'sudo docker push aasri/sudhanshu:latest'
+			}
+		}
+		stage('docker run') {
+			steps {
+				sh 'sudo docker run aasri/sudhanshu'
+			}
+		}
     }
 }
